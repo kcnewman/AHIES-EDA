@@ -3,7 +3,7 @@
 ## **Overview**
 This project conducts an exploratory data analysis (EDA) on the **Annual Household Income and Expenditure Survey dataset**. The dataset provides panel data at the regional levels on expenditure, income, and living conditions of households and individuals in Ghana. The goal of this project is to uncover insights into wage distribution, education levels, employment patterns, and regional disparities.
 
-The analysis is performed in  ```bash**R**.
+The analysis is performed in  `**R**`.
 
 ---
 
@@ -11,12 +11,8 @@ The analysis is performed in  ```bash**R**.
 1. [Project Overview](#overview)
 2. [Dataset Description](#dataset-description)
 3. [Project Structure](#project-structure)
-4. [Installation](#installation)
-5. [Usage](#usage)
-6. [Key Findings](#key-findings)
-7. [Visualizations](#visualizations)
-8. [Contributing](#contributing)
-9. [License](#license)
+4. [Installation and Usage](#installation-and-usage)
+5. [Contributing](#contributing)
 
 ---
 
@@ -44,7 +40,7 @@ The dataset used in this analysis is a 1% sample of the main AHIES dataset. The 
 
 ## **Project Structure**
 The project is organized as follows:
-AHIES-EDA/
+```AHIES-EDA/
 ├── data/                   # Contains the dataset
 │   └── 10%AHIES.csv        # Sample dataset
 ├── scripts/                # Contains R executables
@@ -54,7 +50,7 @@ AHIES-EDA/
 │   ├── plots/              # Visualizations
 │   └── results/            # Aggregated results and tables
 ├── README.md               # Project documentation
-
+```
 
 ---
 
@@ -70,12 +66,12 @@ To run this project locally, follow these steps:
 
     - Clean and preprocess the data.
     - Perform exploratory data analysis.
-    - Generate visualizations and save them in the `outputs plots/` directory.
+    - Generate visualizations and save them in the `outputs/plots/` directory.
     - Save cleaned and aggregated data in the `outputs/results/` directory.
 
 ---
 ## **Contributing**
-Contributions are welcome! If you'd like ro contribute to this project, please follow these steps:
+Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
 
 1. Fork the repository
 2. Create a new branch.
