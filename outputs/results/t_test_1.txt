@@ -1,0 +1,12 @@
+
+	Welch Two Sample t-test
+
+data:  education_rank by abv_avg_wage
+t = -7.8353, df = 2046.1, p-value = 7.454e-15
+alternative hypothesis: true difference in means between group High and group Low is not equal to 0
+95 percent confidence interval:
+ -0.9608911 -0.5761746
+sample estimates:
+mean in group High  mean in group Low 
+          3.055249           3.823781 
+

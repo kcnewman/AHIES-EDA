@@ -1,5 +1,3 @@
-# AHIES_EDA.R
-
 # ------------------------------------------------------------------------------
 # 1. Setup and Libraries
 # ------------------------------------------------------------------------------
@@ -12,12 +10,14 @@ source("./scripts/theme.R")
 # ------------------------------------------------------------------------------
 
 # Load dataset
-ahies <- read.csv('./data/10%AHIES.csv')
+ahies <- read.csv("./data/10%AHIES.csv")
 
 # Select relevant columns
 df <- ahies %>%
-  select(region, s1aq1, s1aq4y, urbrur, s1aq5, s2aq3, s2aq11a29, s4aq2,
-         s4aq40a1, s4aq43m, s4aq49, s4aq55a, s4gq13c, hhid, s3aq23hhid)
+  select(
+    region, s1aq1, s1aq4y, urbrur, s1aq5, s2aq3, s2aq11a29, s4aq2,
+    s4aq40a1, s4aq43m, s4aq49, s4aq55a, s4gq13c, hhid, s3aq23hhid
+  )
 
 # Data exploration
 dim(ahies)
@@ -34,11 +34,11 @@ clean_data <- function(df) {
     mutate(
       urbrur = str_replace(urbrur, "Urbanb", "Urban"),
       s2aq3 = case_when(
-        s2aq3 == '0' ~ 'No Formal Education',
+        s2aq3 == "0" ~ "No Formal Education",
         TRUE ~ s2aq3
       )
     )
-  
+
   # Fill missing wages by occupation type
   df <- df %>%
     group_by(s4aq40a1) %>%
@@ -50,7 +50,7 @@ clean_data <- function(df) {
       )
     ) %>%
     ungroup()
-  
+
   # Fill missing wages by education level
   df <- df %>%
     group_by(s2aq3) %>%
@@ -62,7 +62,7 @@ clean_data <- function(df) {
       )
     ) %>%
     ungroup()
-  
+
   # Encode categorical variables
   df <- df %>%
     mutate(
@@ -86,10 +86,10 @@ clean_data <- function(df) {
         s2aq3 == "Others specify" ~ 16,
         TRUE ~ NA_real_
       ),
-      urban_binary = if_else(urbrur == 'Urban', 1, 0),
-      abv_avg_wage = if_else(s4aq55a > median(s4aq55a, na.rm = TRUE), 'High', 'Low')
+      urban_binary = if_else(urbrur == "Urban", 1, 0),
+      abv_avg_wage = if_else(s4aq55a > median(s4aq55a, na.rm = TRUE), "High", "Low")
     )
-  
+
   return(df)
 }
 
@@ -97,7 +97,7 @@ clean_data <- function(df) {
 df <- clean_data(df)
 
 # Save cleaned data
-write.csv(df, './outputs/results/cleaned_data.csv', row.names = FALSE)
+write.csv(df, "./outputs/results/cleaned_data.csv", row.names = FALSE)
 
 # ------------------------------------------------------------------------------
 # 4. Data Analysis
@@ -105,7 +105,9 @@ write.csv(df, './outputs/results/cleaned_data.csv', row.names = FALSE)
 
 calculate_mode <- function(x) {
   ux <- unique(na.omit(x))
-  if (length(ux) == 0) return(NA)
+  if (length(ux) == 0) {
+    return(NA)
+  }
   ux[which.max(tabulate(match(x, ux)))]
 }
 
@@ -119,8 +121,8 @@ aggregate_data <- function(df) {
       mean_age = mean(s1aq4y, na.rm = TRUE),
       total_males = sum(s1aq1 == "Male", na.rm = TRUE),
       total_females = sum(s1aq1 == "Female", na.rm = TRUE),
-      total_rural = sum(urbrur == 'Rural', na.rm = TRUE),
-      total_urban = sum(urbrur == 'Urban', na.rm = TRUE),
+      total_rural = sum(urbrur == "Rural", na.rm = TRUE),
+      total_urban = sum(urbrur == "Urban", na.rm = TRUE),
       prop_urban = mean(urban_binary),
       most_relationship_type = calculate_mode(s1aq5),
       modal_education = calculate_mode(s2aq3),
@@ -133,7 +135,7 @@ aggregate_data <- function(df) {
       max_wage = max(s4aq55a, na.rm = TRUE),
       prop_min_wage = mean(s4gq13c == "Yes", na.rm = TRUE)
     )
-  
+
   return(aggregated_df)
 }
 
@@ -141,7 +143,7 @@ aggregate_data <- function(df) {
 aggregated_df <- aggregate_data(df)
 
 # Save aggregated data
-write.csv(aggregated_df, './outputs/results/aggregated_data.csv', row.names = FALSE)
+write.csv(aggregated_df, "./outputs/results/aggregated_data.csv", row.names = FALSE)
 
 # ------------------------------------------------------------------------------
 # 5. Top Metrics Function
@@ -149,8 +151,8 @@ write.csv(aggregated_df, './outputs/results/aggregated_data.csv', row.names = FA
 
 top_metrics <- function(df, metric, n = 5) {
   df %>%
-    select(region, {{metric}}) %>%
-    arrange(desc({{metric}})) %>%
+    select(region, {{ metric }}) %>%
+    arrange(desc({{ metric }})) %>%
     head(n)
 }
 
@@ -178,7 +180,7 @@ edu_mets <- df %>%
   group_by(s2aq3) %>%
   summarise(
     avg_wage = mean(s4aq55a, na.rm = TRUE),
-    prop_min_wage = mean(s4gq13c == 'Yes', na.rm = TRUE),
+    prop_min_wage = mean(s4gq13c == "Yes", na.rm = TRUE),
     respondents = n()
   ) %>%
   arrange(desc(avg_wage))
@@ -205,18 +207,20 @@ avg_wage_chart <- aggregated_df %>%
     title = "Average Wage by Region"
   ) +
   coord_flip(clip = "off") +
-  theme(panel.grid.major.x=element_line(color = "gray", size=0.25), 
-        panel.grid.major.y=element_blank(),
-        axis.text.x = element_text(vjust = 0.5))
-ggsave('./outputs/plots/avg_wage_chart.png', avg_wage_chart, width = 8, height = 6)
+  theme(
+    panel.grid.major.x = element_line(color = "gray", size = 0.25),
+    panel.grid.major.y = element_blank(),
+    axis.text.x = element_text(vjust = 0.5)
+  )
+ggsave("./outputs/plots/avg_wage_chart.png", avg_wage_chart, width = 8, height = 6)
 
 # Bar chart for locality proportions
 urb_rur_chart <- df %>%
   group_by(region, urbrur) %>%
-  summarise(count = n()) %>%  
+  summarise(count = n()) %>%
   ungroup() %>%
   group_by(region) %>%
-  mutate(percentage = count / sum(count)) %>% 
+  mutate(percentage = count / sum(count)) %>%
   ungroup() %>%
   ggplot(aes(x = region, y = percentage, fill = urbrur)) +
   geom_col() +
@@ -224,9 +228,10 @@ urb_rur_chart <- df %>%
   scale_y_continuous(labels = scales::percent) +
   geom_text(
     aes(
-      label = ifelse(percentage < 0.12, "", 
-                     paste0(format(round(percentage * 100, 1), nsmall = 1), "%")),
-      y = ifelse(urbrur == "Urban", 0.04, 0.91) 
+      label = ifelse(percentage < 0.12, "",
+        paste0(format(round(percentage * 100, 1), nsmall = 1), "%")
+      ),
+      y = ifelse(urbrur == "Urban", 0.04, 0.91)
     ),
     size = 3.5,
     position = "stack"
@@ -247,10 +252,11 @@ urb_rur_chart <- df %>%
     panel.grid.major.y = element_blank(),
     axis.text.x = element_text(vjust = 0.5)
   )
-ggsave('./outputs/plots/locality_pro_chart.png', urb_rur_chart, width = 8, height = 6)
+ggsave("./outputs/plots/locality_pro_chart.png", urb_rur_chart, width = 8, height = 6)
 
 # Education Rank by Region
-avg_edu_chart <- df %>% mutate(education_rank=as.numeric(education_rank)) %>% 
+avg_edu_chart <- df %>%
+  mutate(education_rank = as.numeric(education_rank)) %>%
   group_by(region) %>%
   summarise(avg_education_rank = mean(education_rank, na.rm = TRUE)) %>%
   ggplot(mapping = aes(x = reorder(region, avg_education_rank), y = avg_education_rank)) +
@@ -274,7 +280,7 @@ avg_edu_chart <- df %>% mutate(education_rank=as.numeric(education_rank)) %>%
     panel.grid.major.y = element_blank(),
     axis.text.x = element_text(vjust = 0.5)
   )
-ggsave('./outputs/plots/edu_rank.png', avg_edu_chart, width = 8, height = 6)
+ggsave("./outputs/plots/edu_rank.png", avg_edu_chart, width = 8, height = 6)
 
 # Box plot Wage Distribution by Education Level
 wage_dist_by_edu_level <- df %>%
@@ -287,8 +293,8 @@ wage_dist_by_edu_level <- df %>%
     y = "Wage (GHS)"
   ) +
   gssthemes() +
-  guides(fill ='none')
-ggsave('./outputs/plots/wage_edu_box_plot.png', wage_dist_by_edu_level, width = 8, height = 6)
+  guides(fill = "none")
+ggsave("./outputs/plots/wage_edu_box_plot.png", wage_dist_by_edu_level, width = 8, height = 6)
 
 # Wage Distribution by Urban/Rural
 wage_dist_by_urbru <- df %>%
@@ -302,49 +308,49 @@ wage_dist_by_urbru <- df %>%
   ) +
   gssthemes() +
   guides(fill = "none")
-ggsave('./outputs/plots/wage_locality_box_plot.png', wage_dist_by_urbru, width = 8, height = 6)
+ggsave("./outputs/plots/wage_locality_box_plot.png", wage_dist_by_urbru, width = 8, height = 6)
 
 # Scatter plot for Wage vs Age
-wage_age_chart <- df %>% 
-  ggplot(aes(x=s1aq4y, y=s4aq55a)) +
-  geom_point(alpha = 0.5, color = '#206095') +
+wage_age_chart <- df %>%
+  ggplot(aes(x = s1aq4y, y = s4aq55a)) +
+  geom_point(alpha = 0.5, color = "#206095") +
   labs(
     title = "Wage vs. Age",
     x = "Age",
     y = "Wage (GHS)"
   ) +
   gssthemes()
-ggsave('./outputs/plots/wage_vs_age_scatter.png', wage_age_chart, width = 8, height = 6)
+ggsave("./outputs/plots/wage_vs_age_scatter.png", wage_age_chart, width = 8, height = 6)
 
 # Scatter plot for Wage vs Education Rank
-wage_education_chart <- df %>% 
-  ggplot(aes(x=education_rank, y=s4aq55a)) +
-  geom_point(alpha = 0.5, color = '#206095') +
+wage_education_chart <- df %>%
+  ggplot(aes(x = education_rank, y = s4aq55a)) +
+  geom_point(alpha = 0.5, color = "#206095") +
   labs(
     title = "Wage vs. Education Rank",
     x = "Education Rank",
     y = "Wage (GHS)"
   ) +
   gssthemes()
-ggsave('./outputs/plots/wage_vs_edu_scatter.png', wage_education_chart, width = 8, height = 6)
+ggsave("./outputs/plots/wage_vs_edu_scatter.png", wage_education_chart, width = 8, height = 6)
 
 # Wage vs Hours worked
-wage_hrs_chart <- df %>% 
-  ggplot(aes(x=s4aq2, y=s4aq55a)) +
-  geom_point(alpha = 0.5, color = '#206095') +
+wage_hrs_chart <- df %>%
+  ggplot(aes(x = s4aq2, y = s4aq55a)) +
+  geom_point(alpha = 0.5, color = "#206095") +
   labs(
     title = "Wage vs. Hours Worked",
     x = "Hours Worked per Week",
     y = "Wage (GHS)"
   ) +
   gssthemes()
-ggsave('./outputs/plots/wage_vs_hrs_scatter.png', wage_age_chart, width = 8, height = 6)
+ggsave("./outputs/plots/wage_vs_hrs_scatter.png", wage_age_chart, width = 8, height = 6)
 
 # Correlation Heatmap
 num_vars <- df %>%
   select(s4aq55a, education_rank, s4aq2, s1aq4y)
 
-corr_matrix <- cor(num_vars, use = 'complete.obs')
+corr_matrix <- cor(num_vars, use = "complete.obs")
 corr_long <- melt(corr_matrix)
 corr_long <- corr_long %>%
   mutate(
@@ -362,20 +368,20 @@ corr_long <- corr_long %>%
     )
   )
 
-corr_heatmap <- ggplot(corr_long, aes(x = Var1, y = Var2, fill = value))+
+corr_heatmap <- ggplot(corr_long, aes(x = Var1, y = Var2, fill = value)) +
   geom_tile() +
-  geom_text(aes(label = round(value, 2)), color = 'black', size = 2) +
+  geom_text(aes(label = round(value, 2)), color = "black", size = 4) +
   scale_fill_gradientn(colours = incidence_color_scheme) +
   theme_minimal() +
   labs(
-    title = 'Correlation Heatmap',
+    title = "Correlation Heatmap",
     x = NULL,
     y = NULL,
-    fill = 'Correlation'
+    fill = "Correlation"
   ) +
   gssthemes() +
-  theme(legend.position = 'bottom')
-ggsave('./outputs/plots/corr_heatmap.png', corr_heatmap, width = 8, height = 6)
+  theme(legend.position = "bottom")
+ggsave("./outputs/plots/corr_heatmap.png", corr_heatmap, width = 8, height = 6)
 
 # Density plots
 dense_plot <- ggplot(df, aes(x = s4aq55a, fill = urbrur)) +
@@ -383,12 +389,12 @@ dense_plot <- ggplot(df, aes(x = s4aq55a, fill = urbrur)) +
   scale_fill_manual(values = c(Urban = urban_color, Rural = rural_color)) +
   labs(
     title = "Wage Distribution by Locality",
-    x = 'Wage (GHS)',
-    y = 'Density',
-    fill = 'Locality'
-  ) + 
+    x = "Wage (GHS)",
+    y = "Density",
+    fill = "Locality"
+  ) +
   gssthemes()
-ggsave('./outputs/plots/wage_locality_density.png', dense_plot, width = 8, height = 6)
+ggsave("./outputs/plots/wage_locality_density.png", dense_plot, width = 8, height = 6)
 
 # ------------------------------------------------------------------------------
 # 8. Statistical Analysis
@@ -396,16 +402,20 @@ ggsave('./outputs/plots/wage_locality_density.png', dense_plot, width = 8, heigh
 
 # Chi-square test for wage and locality type
 cont_table1 <- table(df$urbrur, df$abv_avg_wage)
-chi_square_test <- chisq.test(cont_table)
+chi_square_test_1 <- chisq.test(cont_table1)
+capture.output(print(chi_square_test_1), file = "./outputs/results/chi_square_test_1.txt")
 
 # Chi-square test for wage and gender
 cont_table2 <- table(df$s1aq1, df$abv_avg_wage)
-chi_square_test_2 <- chisq.test(con_table)
+chi_square_test_2 <- chisq.test(cont_table2)
+capture.output(print(chi_square_test_2), file = "./outputs/results/chi_square_test_2.txt")
 
 # T-tests
 t_test1 <- t.test(education_rank ~ abv_avg_wage, data = df)
 t_test2 <- t.test(s4aq2 ~ abv_avg_wage, data = df)
+capture.output(print(t_test1), file = "./outputs/results/t_test_1.txt")
+capture.output(print(t_test2), file = "./outputs/results/t_test_2.txt")
 
 # Linear Model to predict wage
 l_model <- lm(s4aq55a ~ education_rank + s4aq2 + urbrur + s1aq1, data = df)
-summary(l_model)
+capture.output(summary(l_model), file = "./outputs/results/l_model.txt")

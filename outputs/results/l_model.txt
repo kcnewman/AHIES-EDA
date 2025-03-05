@@ -1,0 +1,24 @@
+
+Call:
+lm(formula = s4aq55a ~ education_rank + s4aq2 + urbrur + s1aq1, 
+    data = df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1868.3  -489.3  -138.6   312.2  4642.1 
+
+Coefficients:
+               Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    -177.770    243.661  -0.730    0.466    
+education_rank  146.714     14.148  10.370   <2e-16 ***
+s4aq2             1.814     38.664   0.047    0.963    
+urbrurUrban     136.342    104.970   1.299    0.195    
+s1aq1Male       129.684    104.765   1.238    0.217    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 804.2 on 252 degrees of freedom
+  (3307 observations deleted due to missingness)
+Multiple R-squared:  0.3216,	Adjusted R-squared:  0.3108 
+F-statistic: 29.86 on 4 and 252 DF,  p-value: < 2.2e-16
+
