@@ -189,8 +189,9 @@ edu_mets <- df %>%
 
 # Average Wage by Region
 avg_wage_chart <- aggregated_df %>%
-  ggplot(aes(x = region, y = average_wage)) +
+  ggplot(mapping = aes(x = reorder(region, average_wage), y = average_wage)) +
   geom_col(width = 0.8) +
+  geom_text(mapping = aes(label = scales::comma(average_wage)), hjust = -0.2, ) +
   gssthemes() +
   scale_y_continuous(
     expand = c(0, 1),
@@ -198,13 +199,15 @@ avg_wage_chart <- aggregated_df %>%
     labels = scales::comma,
     breaks = scales::extended_breaks(only.loose = TRUE)
   ) +
-  scale_x_discrete(guide = guide_axis(angle = 90)) +
   labs(
-    x = 'Region',
+    x = NULL,
     y = "Average Wage (GHS)",
     title = "Average Wage by Region"
   ) +
-  coord_cartesian(clip = "off")
+  coord_flip(clip = "off") +
+  theme(panel.grid.major.x=element_line(color = "gray", size=0.25), 
+        panel.grid.major.y=element_blank(),
+        axis.text.x = element_text(vjust = 0.5))
 ggsave('./outputs/plots/avg_wage_chart.png', avg_wage_chart, width = 8, height = 6)
 
 # Bar chart for urban proportion
