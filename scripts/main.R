@@ -210,7 +210,7 @@ avg_wage_chart <- aggregated_df %>%
         axis.text.x = element_text(vjust = 0.5))
 ggsave('./outputs/plots/avg_wage_chart.png', avg_wage_chart, width = 8, height = 6)
 
-# Bar chart for urban proportion
+# Bar chart for locality proportions
 urb_rur_chart <- df %>%
   group_by(region, urbrur) %>%
   summarise(count = n()) %>%  
@@ -265,7 +265,8 @@ avg_edu_chart <- df %>% mutate(education_rank=as.numeric(education_rank)) %>%
   ) +
   labs(
     x = NULL,
-    y = "Average Education Rank"
+    y = "Average Education Rank",
+    title = "Average Education Rank by Region"
   ) +
   coord_flip(clip = "off") +
   theme(
@@ -276,23 +277,31 @@ avg_edu_chart <- df %>% mutate(education_rank=as.numeric(education_rank)) %>%
 ggsave('./outputs/plots/edu_rank.png', avg_edu_chart, width = 8, height = 6)
 
 # Box plot Wage Distribution by Education Level
-wage_dist_by_edu_level <- df %>% mutate(education_rank = factor(education_rank)) %>%  
+wage_dist_by_edu_level <- df %>%
+  mutate(education_rank = factor(education_rank)) %>%
   ggplot(aes(x = education_rank, y = s4aq55a, fill = s2aq3)) +
   geom_boxplot() +
-  labs(title = "Wage Distribution by Education Level", 
-       x = "Education Level",
-       y = "Wage (GHS)")+
-  gssthemes()
+  labs(
+    title = "Wage Distribution by Education Level",
+    x = "Education Level",
+    y = "Wage (GHS)"
+  ) +
+  gssthemes() +
+  guides(fill ='none')
 ggsave('./outputs/plots/wage_edu_box_plot.png', wage_dist_by_edu_level, width = 8, height = 6)
 
 # Wage Distribution by Urban/Rural
-wage_dist_by_urbru <- df %>% mutate(education_rank = factor(education_rank)) %>%  
+wage_dist_by_urbru <- df %>%
+  mutate(education_rank = factor(education_rank)) %>%
   ggplot(aes(x = urbrur, y = s4aq55a, fill = urbrur)) +
   geom_boxplot() +
-  labs(title = "Wage Distribution by Locality Type", 
-       x = "Locality",
-       y = "Wage (GHS)")+
-  gssthemes()
+  labs(
+    title = "Wage Distribution by Locality Type",
+    x = "Locality",
+    y = "Wage (GHS)"
+  ) +
+  gssthemes() +
+  guides(fill = "none")
 ggsave('./outputs/plots/wage_locality_box_plot.png', wage_dist_by_urbru, width = 8, height = 6)
 
 # Scatter plot for Wage vs Age
