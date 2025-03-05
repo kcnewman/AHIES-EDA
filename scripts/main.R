@@ -5,9 +5,7 @@
 # ------------------------------------------------------------------------------
 
 library(tidyverse)
-library(ggplot2)
-library(reshape2)
-source("./theme.R")
+source("./scripts/theme.R")
 
 # ------------------------------------------------------------------------------
 # 2. Load Data
@@ -16,16 +14,16 @@ source("./theme.R")
 # Load dataset
 ahies <- read.csv('./data/10%AHIES.csv')
 
+# Select relevant columns
+df <- ahies %>%
+  select(region, s1aq1, s1aq4y, urbrur, s1aq5, s2aq3, s2aq11a29, s4aq2,
+         s4aq40a1, s4aq43m, s4aq49, s4aq55a, s4gq13c, hhid, s3aq23hhid)
+
 # Data exploration
 dim(ahies)
 head(ahies)
 summary(ahies)
 colnames(ahies)
-
-# Select relevant columns
-df <- ahies %>%
-  select(region, s1aq1, s1aq4y, urbrur, s1aq5, s2aq3, s2aq11a29, s4aq2,
-         s4aq40a1, s4aq43m, s4aq49, s4aq55a, s4gq13c, hhid, s3aq23hhid)
 
 # ------------------------------------------------------------------------------
 # 3. Data Cleaning
@@ -162,36 +160,6 @@ top_wage <- top_metrics(aggregated_df, average_wage)
 edu_spending <- top_metrics(aggregated_df, total_edu_spending)
 urb_pro <- top_metrics(aggregated_df, prop_urban)
 min_wage_prop <- top_metrics(aggregated_df, prop_min_wage)
-
-# Creating Vectors and Matrices
-avg_wage_v <- aggregated_df$average_wage
-names(avg_wage_v) <- aggregated_df$region
-
-hse_size_v <- aggregated_df$avg_household_size
-names(hse_size_v) <- aggregated_df$region
-
-# A matrix of educ. vs wage
-edu_wage_mat <- matrix(
-  c(aggregated_df$modal_education, aggregated_df$average_wage),
-  nrow = nrow(aggregated_df),
-  dimnames = list(aggregated_df$region, c('Education Mode', 'Avg Wage'))
-)  
-
-
-# Putting everything into a list
-results_list <- list(
-  top_households=top_households,
-  top_wage=top_wage,
-  urban_rural_prop=urb_rur_pro,
-  min_wage_prop=min_wage_prop,
-  modal_marital_status=aggregated_df$most_relationship_type,
-  vectors = list(
-    avg_wage = avg_wage_v,
-    household_size = hse_size_v),
-  matrices = list(
-    education_wage=edu_wage_mat
-  )
-)
 
 # ------------------------------------------------------------------------------
 # 6. Key Comparisons

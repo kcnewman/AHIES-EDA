@@ -18,7 +18,7 @@ library(plotly)
 
 
 # load the font
-font_add("poppins", "./Font/Poppins-Bold.ttf")
+font_add("poppins", "./Poppins-Regular.ttf")
 
 # make sure ggplot recognizes the font 
 # and set the font to high-res
